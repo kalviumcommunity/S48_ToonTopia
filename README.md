@@ -25,3 +25,5 @@ To run ToonTopia locally, follow these steps:
 1. Clone this repository to your local machine.
 2. Navigate to the project directory.
 3. Install dependencies
+
+## Deployed link: https://toontopia.onrender.com/ping
