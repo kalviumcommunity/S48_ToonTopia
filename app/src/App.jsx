@@ -1,30 +1,19 @@
+// App.jsx
 import React from 'react';
-import './App.css';
-import bg from './assets/finalig1.jpg'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import HomePage from './components/HomePage';
+import SignUp from './components/SignUp';
+import Login from './components/Login';
+
 const App = () => {
   return (
-    <>
-     <div className="right-image">
-    <img src={bg} alt="Right Image" />
-  </div>
-    <div className="toontopia-container">
-      <div className="content">
-        <header>
-          <h1>ToonTopia</h1>
-        </header>
-        <main>
-          <h2>Welcome to the Cartoon Paradise!</h2>
-          <p>Discover a world of animated adventures at ToonTopia.</p>
-          <div className="auth-buttons">
-            <button className="login-button">Login</button>
-            <button className="signup-button">Sign Up</button>
-          </div>
-        </main>
-      </div>
-      
-    </div>
-   
-  </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </Router>
   );
 };
 
