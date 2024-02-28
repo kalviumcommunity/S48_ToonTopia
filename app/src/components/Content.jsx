@@ -20,7 +20,10 @@ function Content() {
             <h3>{cartoon.name}'s Favorite Cartoon</h3>
             <p>Title: {cartoon.favorite_cartoon.title}</p>
             <p>Release Date: {cartoon.favorite_cartoon.release_date}</p>
+            
             <p>Genre: {cartoon.favorite_cartoon.genre}</p>
+
+
             <p>Description: {cartoon.favorite_cartoon.description}</p>
           </li>
         ))}
