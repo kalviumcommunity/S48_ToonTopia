@@ -1,32 +1,45 @@
 import React, { useState, useEffect } from 'react';
-import '../css/Content.css'; 
+import { Link } from 'react-router-dom';
+import '../css/Content.css';
 
 function Content() {
-  const [cartoons, setCartoons] = useState([]);
+    const [cartoons, setCartoons] = useState([]);
 
-  useEffect(() => {
-    fetch('http://localhost:3002/cartoon')
-      .then(response => response.json())
-      .then(data => setCartoons(data))
-      .catch(error => console.error('Error fetching data:', error));
-  }, []);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch('http://localhost:3002/cartoon');
+                const data = await response.json();
+                setCartoons(data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
 
-  return (
-    <div>
-      <h2 className='fav'>Favorite Cartoons</h2>
-      <ul>
-        {cartoons.map(cartoon => (
-          <li key={cartoon._id} className="box">
-            <h3>{cartoon.name}'s Favorite Cartoon</h3>
-            <p>Title: {cartoon.favorite_cartoon.title}</p>
-            <p>Release Date: {cartoon.favorite_cartoon.release_date}</p>
-            <p>Genre: {cartoon.favorite_cartoon.genre}</p>
-            <p>Description: {cartoon.favorite_cartoon.description}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+        fetchData();
+    }, []);
+
+    return (
+        <div id="content-container" className="content-container">
+            <h2 className='fav-header'>Favorite Cartoons</h2>
+            <Link to="/add-entity">
+                <button className="add-entity-btn">Add Entity</button>
+            </Link>
+            <ul className="cartoon-list">
+                {cartoons.map(cartoon => (
+                    <li key={cartoon._id} className="cartoon-box">
+                        <h3>{cartoon.name}'s Favorite Cartoon</h3>
+                        <>
+                            <p className="cartoon-info"><strong>Title:</strong> {cartoon.title}</p>
+                            <p className="cartoon-info"><strong>Release Date:</strong> {cartoon.release_date}</p>
+                            <p className="cartoon-info"><strong>Genre:</strong> {cartoon.genre}</p>
+                            <p className="cartoon-info"><strong>Description:</strong> {cartoon.description}</p>
+                        </>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
 }
 
 export default Content;

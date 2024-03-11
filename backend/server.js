@@ -1,36 +1,60 @@
 const express = require('express');
-const mongoose = require('mongoose');
-require('dotenv').config();
 const app = express();
-const port = 3002;
-const CartoonModel = require('./models/BestCartoons')
+const port = 3002; 
+app.use(express.json());
+require('dotenv').config();
+const cors = require('cors');
+const mongoose = require('mongoose');
+const CartoonModel = require('./models/BestCartoons');
 
-const mongoURI = process.env.MONGODB_URI;
-const cors = require('cors')
-app.use(cors())
-app.use(express.json())
+app.use(cors());
+app.use(express.urlencoded({ extended: true }));
 
-mongoose.connect(mongoURI, {   
-    useNewUrlParser: true, 
-    useUnifiedTopology: true 
+async function connectToDatabase() {
+    try {
+        await mongoose.connect(process.env.MONGODB_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        console.log('Connected to MongoDB');
+    } catch (error) {
+        console.error('Error connecting to the database:', error);
+    }
+}
+
+app.post('/cartoon', async (req, res) => {
+    try {
+        const { name, title, release_date, genre, description } = req.body;
+        const newCartoon = new CartoonModel({
+            name,
+            title,
+            release_date,
+            genre,
+            description
+        });
+        await newCartoon.save();
+        res.status(201).json({ message: 'Cartoon added successfully' });
+    } catch (error) {
+        console.error('Error adding cartoon:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-db.once('open', () => {
-    console.log('Connected to MongoDB');
+app.get('/cartoon', async (req, res) => {
+    try {
+        const cartoons = await CartoonModel.find();
+        console.log('Retrieved cartoons:', cartoons);
+        res.json(cartoons);
+    } catch (err) {
+        console.error('Error retrieving cartoons:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
-app.get('/', (req, res) => {
-    res.send(`Welcome to the home page. Database connection status: ${db.readyState === 1 ? 'Connected' : 'Not Connected'}`);
+connectToDatabase().then(() => {
+    app.listen(port, () => {
+        console.log(`🚀 Server running on PORT: ${port}`);
+    });
 });
 
-app.get('/cartoon', (req,res)=>{
-    CartoonModel.find()
-    .then(data =>res.json(data))
-    .catch(err => res.json(err))
-})
-
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});
+module.exports = app;
