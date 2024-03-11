@@ -37,7 +37,7 @@ const SignupPage = () => {
                     id="phone"
                     name="phone"
                     placeholder='Enter your phone number'
-                    pattern="[0-9]*" // Accepts numbers only
+                    pattern="[0-9]*" 
                     required
                     />
                     </div>
