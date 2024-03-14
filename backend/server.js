@@ -1,6 +1,7 @@
+
 const express = require('express');
 const app = express();
-const port = 3002; 
+const port = 3002;
 app.use(express.json());
 require('dotenv').config();
 const cors = require('cors');
@@ -22,6 +23,7 @@ async function connectToDatabase() {
     }
 }
 
+
 app.post('/cartoon', async (req, res) => {
     try {
         const { name, title, release_date, genre, description } = req.body;
@@ -30,7 +32,7 @@ app.post('/cartoon', async (req, res) => {
             title,
             release_date,
             genre,
-            description
+            description,
         });
         await newCartoon.save();
         res.status(201).json({ message: 'Cartoon added successfully' });
@@ -40,6 +42,7 @@ app.post('/cartoon', async (req, res) => {
     }
 });
 
+
 app.get('/cartoon', async (req, res) => {
     try {
         const cartoons = await CartoonModel.find();
@@ -47,6 +50,37 @@ app.get('/cartoon', async (req, res) => {
         res.json(cartoons);
     } catch (err) {
         console.error('Error retrieving cartoons:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+app.put('/cartoon/:id', async (req, res) => {
+    try {
+        const { title, release_date, genre, description } = req.body;
+        const { id } = req.params; 
+        const updatedCartoon = await CartoonModel.findByIdAndUpdate(
+            id, 
+            {
+                title,
+                release_date,
+                genre,
+                description,
+            },
+            { new: true }
+        );
+        res.status(200).json(updatedCartoon);
+    } catch (error) {
+        console.error('Error updating cartoon:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+app.delete('/cartoon/:id', async (req, res) => {
+    try {
+        await CartoonModel.findByIdAndDelete(req.params.id);
+        res.status(200).json({ message: 'Cartoon deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting cartoon:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
