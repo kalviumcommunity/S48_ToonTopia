@@ -1,4 +1,3 @@
-
 const express = require('express');
 const app = express();
 const port = 3002;
@@ -7,6 +6,8 @@ require('dotenv').config();
 const cors = require('cors');
 const mongoose = require('mongoose');
 const CartoonModel = require('./models/BestCartoons');
+
+const Joi = require('joi');
 
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
@@ -23,9 +24,21 @@ async function connectToDatabase() {
     }
 }
 
+const cartoonSchema = Joi.object({
+    name: Joi.string().required(),
+    title: Joi.string().required(),
+    release_date: Joi.number().integer().min(1900).max(new Date().getFullYear()).required(),
+    genre: Joi.string().required(),
+    description: Joi.string().required(),
+});
 
 app.post('/cartoon', async (req, res) => {
     try {
+        const { error } = cartoonSchema.validate(req.body);
+        if (error) {
+            return res.status(400).json({ error: error.details[0].message });
+        }
+
         const { name, title, release_date, genre, description } = req.body;
         const newCartoon = new CartoonModel({
             name,
@@ -41,7 +54,6 @@ app.post('/cartoon', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
-
 
 app.get('/cartoon', async (req, res) => {
     try {
