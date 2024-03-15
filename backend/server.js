@@ -97,6 +97,7 @@ app.delete('/cartoon/:id', async (req, res) => {
     }
 });
 
+
 connectToDatabase().then(() => {
     app.listen(port, () => {
         console.log(`🚀 Server running on PORT: ${port}`);
