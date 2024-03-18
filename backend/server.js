@@ -3,12 +3,25 @@ const app = express();
 const port = 3002;
 app.use(express.json());
 require('dotenv').config();
+const dotenv = require('dotenv');
+const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const CartoonModel = require('./models/BestCartoons');
 
 const Joi = require('joi');
+dotenv.config();
 
+// Connect to MongoDB
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(error => console.error('Error connecting to MongoDB:', error));
+
+// Import your model here
+const User = require('./models/User'); // Assuming you have a User model
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
@@ -23,6 +36,31 @@ async function connectToDatabase() {
         console.error('Error connecting to the database:', error);
     }
 }
+
+// Middleware for parsing JSON bodies
+app.use(bodyParser.json());
+app.use(cors());
+
+// Define your routes
+app.post('/signup', async (req, res) => {
+  try {
+    const { name, username, email, phone, password } = req.body;
+    // Assuming you have a User model
+    const newUser = new User({
+      name,
+      username,
+      email,
+      phone,
+      password,
+    });
+    await newUser.save();
+    res.status(201).json({ message: 'User signed up successfully' });
+  } catch (error) {
+    console.error('Error during signup:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 const cartoonSchema = Joi.object({
     name: Joi.string().required(),
