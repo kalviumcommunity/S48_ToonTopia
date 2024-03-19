@@ -1,4 +1,3 @@
-// App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import HomePage from './components/HomePage';
@@ -16,7 +15,6 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/content" element={<Content />} /> 
         <Route path="/add-entity" element={<AddEntityPage />} />
-        <Route path="/content" element={<Content />} />
       </Routes>
     </Router>
   );

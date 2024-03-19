@@ -1,5 +1,3 @@
-/* Content.css */
-
 .content-container {
   margin: 40px;
   text-align: center;
@@ -24,7 +22,7 @@
   border-radius: 10px;
   background-color: #ffffff;
   padding: 25px;
-  margin: 15px; /* Reduce both left and right margins for less horizontal space between boxes */
+  margin: 15px;
   width: 300px;
   box-shadow: 0 4px 8px rgba(255, 251, 251, 0.3);
   transition: transform 0.3s ease-in-out;
@@ -47,4 +45,26 @@
 
 .cartoon-info strong {
   color: #D499B9;
+}
+.button-container {
+  display: flex;
+  justify-content: center; 
+}
+
+.button-container button {
+  margin: 0 4px; 
+}
+.logout-button {
+  position: relative;
+  color: #ffffff;
+  background-color: #e29e9d;
+  padding: 1px;
+  align-self: center;
+  font-size: larger;
+  margin-top: 10px;
+}
+.logout-button:hover {
+  background-color: #e29e9d;
+  transform: scale(1.1);
+  text-decoration: underline; 
 }
