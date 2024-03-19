@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import '../css/SignUp.css'; // You can reuse styles from App.css or create a new CSS file
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import '../css/SignUp.css';
 import bg from '../assets/finalig1.jpg';
+import Cookies from 'universal-cookie';
 
-const SignupPage = () => {
+const SignUp = () => {
   const [formData, setFormData] = useState({
     name: '',
     username: '',
@@ -12,30 +14,36 @@ const SignupPage = () => {
     password: '',
   });
 
+  const navigate = useNavigate();
+  const cookies = new Cookies();
+
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // const fetchData = async () => {
+  //   try {
+  //     const response = await axios.get('http://localhost:3002/cartoon');
+  //     // Process the response data as needed
+  //     console.log('Data fetched successfully:', response.data);
+  //   } catch (error) {
+  //     console.error('Error fetching data:', error);
+  //   }
+  // };
+
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-      if (response.ok) {
+      const response = await axios.post('http://localhost:3002/signup', formData);
+      if (response.status === 201) {
         console.log('Signup successful');
-        // Redirect or show success message
+        cookies.set('username', formData.username, { path: '/' });
+        navigate('/content');
       } else {
         console.error('Signup failed');
-        // Handle error, show error message, etc.
       }
     } catch (error) {
       console.error('Error during signup:', error);
-      // Handle error, show error message, etc.
     }
   };
 
@@ -90,4 +98,4 @@ const SignupPage = () => {
   );
 };
 
-export default SignupPage;
+export default SignUp;

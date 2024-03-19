@@ -5,14 +5,17 @@ app.use(express.json());
 require('dotenv').config();
 const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcryptjs');
+const cookieParser = require('cookie-parser'); 
+app.use(cookieParser());
 const cors = require('cors');
 const mongoose = require('mongoose');
 const CartoonModel = require('./models/BestCartoons');
+const UserModel = require('./models/User');
 
 const Joi = require('joi');
 dotenv.config();
 
-// Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -20,8 +23,7 @@ mongoose.connect(process.env.MONGODB_URI, {
   .then(() => console.log('Connected to MongoDB'))
   .catch(error => console.error('Error connecting to MongoDB:', error));
 
-// Import your model here
-const User = require('./models/User'); // Assuming you have a User model
+const User = require('./models/User'); 
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
@@ -37,31 +39,69 @@ async function connectToDatabase() {
     }
 }
 
-// Middleware for parsing JSON bodies
 app.use(bodyParser.json());
 app.use(cors());
 
-// Define your routes
 app.post('/signup', async (req, res) => {
-  try {
-    const { name, username, email, phone, password } = req.body;
-    // Assuming you have a User model
-    const newUser = new User({
-      name,
-      username,
-      email,
-      phone,
-      password,
-    });
-    await newUser.save();
-    res.status(201).json({ message: 'User signed up successfully' });
-  } catch (error) {
-    console.error('Error during signup:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+    try {
+      const { name, username, email, phone, password } = req.body;
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newUser = new User({
+        name,
+        username,
+        email,
+        phone,
+        password: hashedPassword, 
+      });
+      await newUser.save();
+      res.cookie('user', newUser, { httpOnly: true });
+      res.status(201).json({ message: 'User signed up successfully' });
+    } catch (error) {
+      console.error('Error during signup:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+  
+  app.post('/login', async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      const user = await User.findOne({ username });
+      await user.save()
+      if (user) {
 
+        res.cookie('user', user, { httpOnly: true });
+        res.json({
+            success: true,
+            message: "Login successful",
+            username
+          });
+    //   const isPasswordValid = await bcrypt.compare(password, user.password);
+    //   if (!isPasswordValid) {
+    //     return res.status(401).json({ error: 'Invalid credentials' });
+    //   }
+      }else{
+        return res.status(401).json({ error: 'Invalid credentials' });
 
+      }
+      
+    } catch (error) {
+      console.error('Error during login:', error);
+      res.status(500).json({ error: 'Incorrect username or password' });
+    }
+  });
+  
+  const authenticateUser = (req, res, next) => {
+    if (req.cookies.user) {
+      next();
+    } else {
+      res.status(401).json({ error: 'Unauthorized' });
+    }
+  };
+  
+  app.get('/protected', authenticateUser, (req, res) => {
+    res.json({ message: 'Access granted to protected route' });
+  });
+  
 const cartoonSchema = Joi.object({
     name: Joi.string().required(),
     title: Joi.string().required(),
@@ -92,7 +132,16 @@ app.post('/cartoon', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
-
+app.get('/signup', async (req, res) => {
+    try {
+        const users = await UserModel.find();
+        console.log('Retrieved users:', users);
+        res.json(users);
+    } catch (err) {
+        console.error('Error retrieving cartoons:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 app.get('/cartoon', async (req, res) => {
     try {
         const cartoons = await CartoonModel.find();
