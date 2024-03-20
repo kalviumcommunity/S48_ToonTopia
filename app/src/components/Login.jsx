@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import '../css/Login.css';
 import bg from '../assets/finalig1.jpg';
 import Cookies from 'universal-cookie';
+// import { Jwt } from 'jsonwebtoken';
 
 const Login = () => {
   const navigate = useNavigate();

@@ -21,16 +21,6 @@ const SignUp = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // const fetchData = async () => {
-  //   try {
-  //     const response = await axios.get('http://localhost:3002/cartoon');
-  //     // Process the response data as needed
-  //     console.log('Data fetched successfully:', response.data);
-  //   } catch (error) {
-  //     console.error('Error fetching data:', error);
-  //   }
-  // };
-
   const handleSignup = async (e) => {
     e.preventDefault();
     try {

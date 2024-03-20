@@ -12,7 +12,8 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const CartoonModel = require('./models/BestCartoons');
 const UserModel = require('./models/User');
-
+const jwt = require('jsonwebtoken');
+const secretKey = process.env.SECRET_KEY;
 const Joi = require('joi');
 dotenv.config();
 
@@ -41,6 +42,7 @@ async function connectToDatabase() {
 
 app.use(bodyParser.json());
 app.use(cors());
+
 
 app.post('/signup', async (req, res) => {
     try {
@@ -75,10 +77,6 @@ app.post('/signup', async (req, res) => {
             message: "Login successful",
             username
           });
-    //   const isPasswordValid = await bcrypt.compare(password, user.password);
-    //   if (!isPasswordValid) {
-    //     return res.status(401).json({ error: 'Invalid credentials' });
-    //   }
       }else{
         return res.status(401).json({ error: 'Invalid credentials' });
 
@@ -89,18 +87,7 @@ app.post('/signup', async (req, res) => {
       res.status(500).json({ error: 'Incorrect username or password' });
     }
   });
-  
-  const authenticateUser = (req, res, next) => {
-    if (req.cookies.user) {
-      next();
-    } else {
-      res.status(401).json({ error: 'Unauthorized' });
-    }
-  };
-  
-  app.get('/protected', authenticateUser, (req, res) => {
-    res.json({ message: 'Access granted to protected route' });
-  });
+
   
 const cartoonSchema = Joi.object({
     name: Joi.string().required(),

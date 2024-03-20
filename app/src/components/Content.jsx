@@ -8,7 +8,7 @@ function Content() {
   const [selectedCartoon, setSelectedCartoon] = useState(null); 
   const [updatedCartoonData, setUpdatedCartoonData] = useState({}); 
   const location = useLocation();
-  const navigate = useNavigate(); // Get the navigate function
+  const navigate = useNavigate();
 
   const fetchData = async () => {
     try {
@@ -61,9 +61,7 @@ function Content() {
   };
 
   const handleLogout = () => {
-    // Clear the cookie by setting its expiration date to the past
     document.cookie = 'username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-    // After clearing the cookie, navigate to the login page
     navigate('/login');
   };
 
