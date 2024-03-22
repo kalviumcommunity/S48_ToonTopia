@@ -12,7 +12,8 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const CartoonModel = require('./models/BestCartoons');
 const UserModel = require('./models/User');
-
+const jwt = require('jsonwebtoken');
+const secretKey = process.env.SECRET_KEY;
 const Joi = require('joi');
 dotenv.config();
 
@@ -42,6 +43,7 @@ async function connectToDatabase() {
 app.use(bodyParser.json());
 app.use(cors());
 
+
 app.post('/signup', async (req, res) => {
     try {
       const { name, username, email, phone, password } = req.body;
@@ -54,8 +56,10 @@ app.post('/signup', async (req, res) => {
         password: hashedPassword, 
       });
       await newUser.save();
-      res.cookie('user', newUser, { httpOnly: true });
-      res.status(201).json({ message: 'User signed up successfully' });
+      const token = jwt.sign({ username: newUser.username }, secretKey, { expiresIn: '1h' });
+      res.cookie('token', token, { httpOnly: true });
+      console.log(token)
+      res.json({ message: 'User signed up successfully',token });
     } catch (error) {
       console.error('Error during signup:', error);
       res.status(500).json({ error: 'Internal Server Error' });
@@ -64,43 +68,57 @@ app.post('/signup', async (req, res) => {
   
   app.post('/login', async (req, res) => {
     try {
-      const { username, password } = req.body;
-      const user = await User.findOne({ username });
-      await user.save()
-      if (user) {
+        const { username, password } = req.body;
+        const user = await User.findOne({ username });
 
-        res.cookie('user', user, { httpOnly: true });
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+
+        if (!isPasswordValid) {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+
+        const token = jwt.sign({ username: user.username }, secretKey, { expiresIn: '1h' });
+
+        res.cookie('token', token, { httpOnly: true });
         res.json({
             success: true,
             message: "Login successful",
-            username
-          });
-    //   const isPasswordValid = await bcrypt.compare(password, user.password);
-    //   if (!isPasswordValid) {
-    //     return res.status(401).json({ error: 'Invalid credentials' });
-    //   }
-      }else{
-        return res.status(401).json({ error: 'Invalid credentials' });
-
-      }
-      
+            username,
+            token
+        });
     } catch (error) {
-      console.error('Error during login:', error);
-      res.status(500).json({ error: 'Incorrect username or password' });
+        console.error('Error during login:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
-  });
-  
-  const authenticateUser = (req, res, next) => {
-    if (req.cookies.user) {
-      next();
-    } else {
-      res.status(401).json({ error: 'Unauthorized' });
+});
+
+const verifyToken = (req, res, next) => {
+    const token = req.cookies.token;
+
+    if (!token) {
+        return res.status(403).json({ error: 'No token provided' });
     }
-  };
-  
-  app.get('/protected', authenticateUser, (req, res) => {
-    res.json({ message: 'Access granted to protected route' });
-  });
+
+    jwt.verify(token, secretKey, (err, decoded) => {
+        if (err) {
+            return res.status(401).json({ error: 'Failed to authenticate token' });
+        }
+        req.username = decoded.username;
+        next();
+    });
+};
+
+app.get('/login', verifyToken, (req, res) => {
+    res.json({ message: 'Protected route accessed successfully' });
+});
+app.get('/signup', verifyToken, (req, res) => {
+    res.json({ message: 'Protected route accessed successfully' });
+});
+
   
 const cartoonSchema = Joi.object({
     name: Joi.string().required(),

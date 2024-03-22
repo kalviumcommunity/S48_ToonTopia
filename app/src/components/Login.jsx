@@ -28,6 +28,7 @@ const Login = () => {
       if (response.ok) {
         console.log('Logged in as:', data.username);
         cookies.set('username', data.username);
+        cookies.set("token",data.token)
         navigate('/content');
       } else {
         setError(data.error);
