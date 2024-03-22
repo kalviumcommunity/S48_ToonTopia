@@ -4,6 +4,7 @@ import axios from 'axios';
 import '../css/SignUp.css';
 import bg from '../assets/finalig1.jpg';
 import Cookies from 'universal-cookie';
+// import { Jwt } from 'jsonwebtoken';
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -25,13 +26,12 @@ const SignUp = () => {
     e.preventDefault();
     try {
       const response = await axios.post('http://localhost:3002/signup', formData);
-      if (response.status === 201) {
         console.log('Signup successful');
         cookies.set('username', formData.username, { path: '/' });
+        cookies.set("token",response.data.token)
+
         navigate('/content');
-      } else {
-        console.error('Signup failed');
-      }
+    
     } catch (error) {
       console.error('Error during signup:', error);
     }
