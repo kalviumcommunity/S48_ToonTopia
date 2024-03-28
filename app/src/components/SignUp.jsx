@@ -27,11 +27,11 @@ const SignUp = () => {
     try {
       const response = await axios.post('http://localhost:3002/signup', formData);
         console.log('Signup successful');
+        console.log(response)
         cookies.set('username', formData.username, { path: '/' });
         cookies.set("token",response.data.token)
+        // navigate('/content');
 
-        navigate('/content');
-    
     } catch (error) {
       console.error('Error during signup:', error);
     }
