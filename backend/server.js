@@ -43,7 +43,26 @@ async function connectToDatabase() {
 app.use(bodyParser.json());
 app.use(cors());
 
-
+app.get('/users', async (req, res) => {
+    try {
+      const users = await UserModel.find();
+      res.json(users);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+  
+  // Add a GET endpoint to retrieve entities created by a specific user
+  app.get('/users/:userId/entities', async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      const entities = await CartoonModel.find({ created_by: userId });
+      res.json(entities);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+  
 app.post('/signup', async (req, res) => {
     try {
       const { name, username, email, phone, password } = req.body;
@@ -115,9 +134,9 @@ const verifyToken = (req, res, next) => {
 app.get('/login', verifyToken, (req, res) => {
     res.json({ message: 'Protected route accessed successfully' });
 });
-app.get('/signup', verifyToken, (req, res) => {
-    res.json({ message: 'Protected route accessed successfully' });
-});
+// app.get('/signup', verifyToken, (req, res) => {
+//     res.json({ message: 'Protected route accessed successfully' });
+// });
 
   
 const cartoonSchema = Joi.object({
@@ -126,6 +145,7 @@ const cartoonSchema = Joi.object({
     release_date: Joi.number().integer().min(1900).max(new Date().getFullYear()).required(),
     genre: Joi.string().required(),
     description: Joi.string().required(),
+    created_by: Joi.string().required()
 });
 
 app.post('/cartoon', async (req, res) => {
@@ -135,13 +155,14 @@ app.post('/cartoon', async (req, res) => {
             return res.status(400).json({ error: error.details[0].message });
         }
 
-        const { name, title, release_date, genre, description } = req.body;
+        const { name, title, release_date, genre, description, created_by } = req.body;
         const newCartoon = new CartoonModel({
             name,
             title,
             release_date,
             genre,
             description,
+            created_by
         });
         await newCartoon.save();
         res.status(201).json({ message: 'Cartoon added successfully' });
@@ -162,7 +183,9 @@ app.get('/signup', async (req, res) => {
 });
 app.get('/cartoon', async (req, res) => {
     try {
-        const cartoons = await CartoonModel.find();
+        const { username } = req.query; // Get the selected username from the query parameters
+        const filter = username ? { created_by: username } : {}; // Filter based on selected username
+        const cartoons = await CartoonModel.find(filter);
         console.log('Retrieved cartoons:', cartoons);
         res.json(cartoons);
     } catch (err) {
@@ -174,7 +197,7 @@ app.get('/cartoon', async (req, res) => {
 app.put('/cartoon/:id', async (req, res) => {
     try {
         const { title, release_date, genre, description } = req.body;
-        const { id } = req.params; 
+        const { id } = req.params.id; 
         const updatedCartoon = await CartoonModel.findByIdAndUpdate(
             id, 
             {

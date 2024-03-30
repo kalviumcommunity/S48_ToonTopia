@@ -30,7 +30,7 @@ const SignUp = () => {
         console.log(response)
         cookies.set('username', formData.username, { path: '/' });
         cookies.set("token",response.data.token)
-        // navigate('/content');
+        navigate('/content');
 
     } catch (error) {
       console.error('Error during signup:', error);

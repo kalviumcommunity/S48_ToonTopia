@@ -5,7 +5,9 @@ const CartoonSchema = new mongoose.Schema({
     title: String,
     release_date: Number,
     genre:String,
-    description:String
+    description:String,
+    created_by: String
+    
 })
 
 const CartoonModel = mongoose.model("datas", CartoonSchema)
