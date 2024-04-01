@@ -4,6 +4,7 @@ import axios from 'axios';
 import '../css/SignUp.css';
 import bg from '../assets/finalig1.jpg';
 import Cookies from 'universal-cookie';
+// import { Jwt } from 'jsonwebtoken';
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -21,27 +22,16 @@ const SignUp = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // const fetchData = async () => {
-  //   try {
-  //     const response = await axios.get('http://localhost:3002/cartoon');
-  //     // Process the response data as needed
-  //     console.log('Data fetched successfully:', response.data);
-  //   } catch (error) {
-  //     console.error('Error fetching data:', error);
-  //   }
-  // };
-
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post('http://localhost:3002/signup', formData);
-      if (response.status === 201) {
         console.log('Signup successful');
+        console.log(response)
         cookies.set('username', formData.username, { path: '/' });
+        cookies.set("token",response.data.token)
         navigate('/content');
-      } else {
-        console.error('Signup failed');
-      }
+
     } catch (error) {
       console.error('Error during signup:', error);
     }

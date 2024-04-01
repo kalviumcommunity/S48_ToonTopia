@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Content from './Content'; 
+import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom';
 import '../css/AddEntity.css'
 
@@ -11,7 +12,8 @@ function AddEntity() {
     title: '',
     release_date: '',
     genre: '',
-    description:''
+    description:'',
+    created_by: Cookies.get("username")
   });
 
   const [entityAdded, setEntityAdded] = useState(false); 
@@ -52,6 +54,7 @@ function AddEntity() {
     </div>
   );
 }
+
 
 export default AddEntity;
 

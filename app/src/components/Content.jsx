@@ -7,8 +7,15 @@ function Content() {
   const [cartoons, setCartoons] = useState([]);
   const [selectedCartoon, setSelectedCartoon] = useState(null); 
   const [updatedCartoonData, setUpdatedCartoonData] = useState({}); 
+  const [users, setUsers] = useState([]);  //added
+  const [selectedUser, setSelectedUser] = useState(''); //added
   const location = useLocation();
-  const navigate = useNavigate(); // Get the navigate function
+  const navigate = useNavigate();
+
+  useEffect(() => {    //added
+    fetchData();
+    fetchUsers();
+  }, [selectedUser]);
 
   const fetchData = async () => {
     try {
@@ -19,9 +26,22 @@ function Content() {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get('http://localhost:3002/signup');
+      setUsers(response.data.map(user => user.username));
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
+
+  const filteredCartoons = selectedUser
+  ? cartoons.filter(cartoon => cartoon.created_by === selectedUser)
+  : cartoons;
+  
+  const handleUserChange = (e) => {
+    setSelectedUser(e.target.value);
+  };
 
   const handleUpdate = (cartoon) => {
     setSelectedCartoon(cartoon); 
@@ -61,9 +81,9 @@ function Content() {
   };
 
   const handleLogout = () => {
-    // Clear the cookie by setting its expiration date to the past
     document.cookie = 'username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-    // After clearing the cookie, navigate to the login page
+    document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+
     navigate('/login');
   };
 
@@ -71,6 +91,15 @@ function Content() {
     <>
       <div id="content-container" className="content-container">
         <h2 className="fav-header">Favorite Cartoons</h2>
+        <div>
+          <label htmlFor="userDropdown">Select User:</label>
+          <select id="userDropdown" value={selectedUser} onChange={handleUserChange}>
+            <option value="">All Users</option>
+            {users.map(user => (
+              <option key={user} value={user.created_by}>{user}</option>
+            ))}
+          </select>
+        </div>
         <Link to="/add-entity">
           <button className="add-entity-btn">Add Entity</button>
         </Link>
@@ -78,7 +107,7 @@ function Content() {
         <button onClick={handleLogout} className="logout-button">Logout</button>
       </div>
         <ul className="cartoon-list">
-          {cartoons.map((cartoon) => (
+          {cartoons.filter(item=>item.created_by===selectedUser).map((cartoon) => (
             <li key={cartoon._id} className="cartoon-box">
               <h3>{cartoon.name}'s Favorite Cartoon</h3>
               <>
@@ -112,3 +141,4 @@ function Content() {
 }
 
 export default Content;
+
