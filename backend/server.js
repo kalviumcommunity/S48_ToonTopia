@@ -14,10 +14,11 @@ const CartoonModel = require('./models/BestCartoons');
 const UserModel = require('./models/User');
 const jwt = require('jsonwebtoken');
 const secretKey = process.env.SECRET_KEY;
+const mongoURi = process.env.MONGODB_URI
 const Joi = require('joi');
 dotenv.config();
 
-mongoose.connect(process.env.MONGODB_URI, {
+mongoose.connect(mongoURi, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
@@ -30,7 +31,7 @@ app.use(express.urlencoded({ extended: true }));
 
 async function connectToDatabase() {
     try {
-        await mongoose.connect(process.env.MONGODB_URI, {
+        await mongoose.connect(mongoURi, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         });
