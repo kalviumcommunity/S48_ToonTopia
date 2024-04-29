@@ -11,6 +11,9 @@ app.use(cookieParser());
 const cors = require('cors');
 const mongoose = require('mongoose');
 const CartoonModel = require('./models/BestCartoons');
+
+const Joi = require('joi');
+
 const UserModel = require('./models/User');
 const jwt = require('jsonwebtoken');
 const secretKey = process.env.SECRET_KEY;
