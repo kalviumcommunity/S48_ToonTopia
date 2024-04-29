@@ -6,9 +6,7 @@ require('dotenv').config();
 const cors = require('cors');
 const mongoose = require('mongoose');
 const CartoonModel = require('./models/BestCartoons');
-
 const Joi = require('joi');
-
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
