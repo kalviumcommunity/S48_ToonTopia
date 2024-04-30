@@ -1,33 +1,70 @@
-body{
-    background-color: #e29e9d;
+.content-container {
+  margin: 40px;
+  text-align: center;
 }
 
-.box {
-    border: 1px solid #ccc;
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-  }
-  
-  .fav {
-    color: #333;
-  }
-  
-  ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  li {
-    margin-bottom: 20px;
-  }
-  
-  h3 {
-    color: #0066cc;
-  }
-  
-  p {
-    margin: 8px 0;
-    color: #555;
-  }
-  
+.fav-header {
+  color: #17183B;
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+.cartoon-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.cartoon-box {
+  border: 2px solid #ffffff;
+  border-radius: 10px;
+  background-color: #ffffff;
+  padding: 25px;
+  margin: 15px;
+  width: 300px;
+  box-shadow: 0 4px 8px rgba(255, 251, 251, 0.3);
+  transition: transform 0.3s ease-in-out;
+}
+
+.cartoon-box:hover {
+  transform: scale(1.05);
+}
+
+.cartoon-box h3 {
+  color: #D499B9;
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+.cartoon-info {
+  margin: 10px 0;
+  color: #2c3e50;
+}
+
+.cartoon-info strong {
+  color: #D499B9;
+}
+.button-container {
+  display: flex;
+  justify-content: center; 
+}
+
+.button-container button {
+  margin: 0 4px; 
+}
+.logout-button {
+  position: relative;
+  color: #ffffff;
+  background-color: #e29e9d;
+  padding: 1px;
+  align-self: center;
+  font-size: larger;
+  margin-top: 10px;
+}
+.logout-button:hover {
+  background-color: #e29e9d;
+  transform: scale(1.1);
+  text-decoration: underline; 
+}
