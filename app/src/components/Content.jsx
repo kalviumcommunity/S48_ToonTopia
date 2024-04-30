@@ -6,13 +6,18 @@ import '../css/Content.css';
 function Content() {
   const [cartoons, setCartoons] = useState([]);
   const [selectedCartoon, setSelectedCartoon] = useState(null); 
-  const [updatedCartoonData, setUpdatedCartoonData] = useState({}); 
-  const [users, setUsers] = useState([]);  //added
-  const [selectedUser, setSelectedUser] = useState(''); //added
+  const [updatedCartoonData, setUpdatedCartoonData] = useState({ 
+    title: '',
+    release_date: '',
+    genre: '',
+    description: ''
+  }); 
+  const [users, setUsers] = useState([]);  
+  const [selectedUser, setSelectedUser] = useState(''); 
   const location = useLocation();
   const navigate = useNavigate();
 
-  useEffect(() => {    //added
+  useEffect(() => {    
     fetchData();
     fetchUsers();
   }, [selectedUser]);
@@ -50,25 +55,37 @@ function Content() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUpdatedCartoonData({ ...updatedCartoonData, [name]: value });
+    setUpdatedCartoonData({ ...updatedCartoonData, [name]: value || '' });
   };
 
   const handleCancel = () => {
     setSelectedCartoon(null); 
-    setUpdatedCartoonData({}); 
+    setUpdatedCartoonData({ 
+      title: '',
+      release_date: '',
+      genre: '',
+      description: ''
+    }); 
   };
 
   const handleSave = async () => {
     try {
       await axios.put(`http://localhost:3002/cartoon/${selectedCartoon._id}`, updatedCartoonData);
       console.log('Entity updated successfully');
-      fetchData(); 
-      setSelectedCartoon(null);
-      setUpdatedCartoonData({}); 
+      // Fetch the updated data after the entity is successfully updated
+      const response = await axios.get('http://localhost:3002/cartoon');
+      setCartoons(response.data); // Update the cartoons state with the updated data
+      setUpdatedCartoonData({ 
+        title: '',
+        release_date: '',
+        genre: '',
+        description: ''
+      }); 
     } catch (error) {
       console.error('Error updating entity:', error);
     }
   };
+  
 
   const handleDelete = async (id) => {
     try {
@@ -104,8 +121,8 @@ function Content() {
           <button className="add-entity-btn">Add Entity</button>
         </Link>
         <div className="logout-container">
-        <button onClick={handleLogout} className="logout-button">Logout</button>
-      </div>
+          <button onClick={handleLogout} className="logout-button">Logout</button>
+        </div>
         <ul className="cartoon-list">
           {cartoons.filter(item=>item.created_by===selectedUser).map((cartoon) => (
             <li key={cartoon._id} className="cartoon-box">
@@ -135,10 +152,8 @@ function Content() {
           ))}
         </ul>
       </div>
-      
     </>
   );
 }
 
 export default Content;
-
