@@ -12,8 +12,6 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const CartoonModel = require('./models/BestCartoons');
 
-const Joi = require('joi');
-
 const UserModel = require('./models/User');
 const jwt = require('jsonwebtoken');
 const secretKey = process.env.SECRET_KEY;
@@ -138,9 +136,7 @@ const verifyToken = (req, res, next) => {
 app.get('/login', verifyToken, (req, res) => {
     res.json({ message: 'Protected route accessed successfully' });
 });
-// app.get('/signup', verifyToken, (req, res) => {
-//     res.json({ message: 'Protected route accessed successfully' });
-// });
+
 
   
 const cartoonSchema = Joi.object({
@@ -212,7 +208,7 @@ app.put('/cartoon/:id', async (req, res) => {
             },
             { new: true }
         );
-        res.status(200).json(updatedCartoon);
+        res.status(200).json(req.body);
     } catch (error) {
         console.error('Error updating cartoon:', error);
         res.status(500).json({ error: 'Internal Server Error' });
