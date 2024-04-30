@@ -105,6 +105,7 @@ function Content() {
   };
 
   return (
+
     <>
       <div id="content-container" className="content-container">
         <h2 className="fav-header">Favorite Cartoons</h2>
