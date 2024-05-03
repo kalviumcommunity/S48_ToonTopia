@@ -11,6 +11,7 @@ const mongoURI = process.env.MONGODB_URI;
 // Connect to MongoDB
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
 
+
 // Check connection status
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
