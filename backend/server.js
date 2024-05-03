@@ -1,4 +1,8 @@
 const express = require('express');
+
+
+// Define the home route
+
 const app = express();
 const port = 3002;
 app.use(express.json());
