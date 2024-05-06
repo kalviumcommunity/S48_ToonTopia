@@ -6,46 +6,46 @@
     height: 100vh;
     margin-top: -50px; 
   }
-  
+
   .contentlogin {
     background-color: #ffffff;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
   }
-  
+
   header h1 {
     color: #333333;
   }
-  
+
   main {
     text-align: center;
   }
-  
+
   form {
     display: flex;
     flex-direction: column;
     max-width: 300px;
     margin: 0 auto;
   }
-  
+
   .form-group {
     margin-bottom: 15px;
   }
-  
+
   label {
     font-weight: bold;
     margin-bottom: 5px;
     color: #333333;
   }
-  
+
   input {
     width: 90%;
     padding: 8px;
     border: 1px solid #cccccc;
     border-radius: 4px;
   }
-  
+
   button {
     background-color: #3498db;
     color: #ffffff;
@@ -55,22 +55,22 @@
     cursor: pointer;
     font-size: 16px;
   }
-  
+
   button:hover {
     background-color: #2980b9;
   }
-  
+
   p {
     margin-top: 15px;
     color: #555555;
   }
-  
+
   a {
     color: #3498db;
     text-decoration: none;
     font-weight: bold;
   }
-  
+
   a:hover {
     text-decoration: underline;
   }
